@@ -828,6 +828,7 @@ server <- function(input, output, session) {
   })
   
   #Graph reactive
+  suppressWarnings(
   gr_1 <- function(){ 
     data %>% 
       filter(province == input$prov2,
@@ -842,6 +843,7 @@ server <- function(input, output, session) {
       ggplot(aes(value, district)) +
       geom_col(na.rm= T)+
       geom_text(aes(label = round(value,1)),
+                na.rm = T,
                 alpha= 0.9, size=3.2,
                 vjust=1, hjust = 1,
                 nudge_y= 0.4,
@@ -850,6 +852,7 @@ server <- function(input, output, session) {
       labs(title = "")
     
   }
+  )
   
   #Rendering graph   
   output$plot1 <- renderPlot({ 
@@ -906,6 +909,7 @@ server <- function(input, output, session) {
   })     
   
   #Time series chart function
+  suppressWarnings(
   gr_2 <- function(){
     req(input$dist_t)
     data %>% 
@@ -924,6 +928,7 @@ server <- function(input, output, session) {
       labs(x= "Years", y= input$stat_t,
            color= "District")
   }
+  )
   
   #Rendering chart time series
   output$plot2 <- renderPlotly({
@@ -967,6 +972,7 @@ server <- function(input, output, session) {
   })
   
   #Scatter plot function
+  suppressWarnings(
   gr_3 <- function(){
     data %>% 
       select(-domain, -source, -definition, -units, -indicator_1,-year_1, -positive, -negative, -context) %>% 
@@ -977,11 +983,10 @@ server <- function(input, output, session) {
         !str_detect(district, "FR"),
         !str_detect(district, "Agency")) %>% 
       filter(indicator %in%  c(input$stat_s1,input$stat_s2)) %>%
-      spread(indicator, value) %>% 
+      pivot_wider(names_from =  indicator,values_from =   value) %>% 
       ggplot(aes(.data[[input$stat_s1]], .data[[input$stat_s2]]))+
-      geom_point(position = "jitter", size= 1) +
-      # geom_text_repel(aes(label = district)) +
-      geom_smooth(method = "lm") +
+      geom_point(na.rm=TRUE, size= 1) +
+      geom_smooth(na.rm=TRUE, method = "lm") +
       scale_x_continuous(labels = scales::number_format() )+
       scale_y_continuous(labels = scales::number_format())+
       labs(title = glue("Year", " ", "{ input$time_s }:", " ", "Districts for Selected Indicators"),
@@ -990,6 +995,7 @@ server <- function(input, output, session) {
            y=input$stat_s2,
            color="Province")
   }
+  )
   
   #Rendering scatter plot
   output$plot3 <- renderPlot({
@@ -1022,11 +1028,12 @@ server <- function(input, output, session) {
           !str_detect(district, "FR"),
           !str_detect(district, "Agency")) %>% 
         filter(indicator %in%  c(input$stat_s1,input$stat_s2)) %>%
-        spread(indicator, value) %>% 
-        ggplot(aes(.data[[input$stat_s1]], .data[[input$stat_s2]], color = province))+
-        geom_point(position = "jitter", size= 1) +
-        geom_text_repel(aes(label = district)) +
-        geom_smooth(method = "lm") +
+        pivot_wider(names_from =  indicator, values_from =  value) %>% 
+        ggplot(aes(.data[[input$stat_s1]], .data[[input$stat_s2]], 
+                   color = province))+
+        geom_point(na.rm=TRUE, size= 1) +
+        geom_text_repel(aes(label = district), na.rm = TRUE, max.overlaps = 5) +
+        geom_smooth(na.rm = TRUE, method = "lm") +
         scale_x_continuous(labels = scales::number_format() )+
         scale_y_continuous(labels = scales::number_format())+
         labs(title = glue("Year", " ", "{ input$time_s }:", " ", "Districts for Selected Indicators"),
