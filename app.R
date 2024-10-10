@@ -150,8 +150,8 @@ ui <- function(request){
                                  tags$style(type = 'text/css', '#double_map_1 {height: calc(98vh - 50px) !important;}'),
                                  leafletOutput("double_map_1", width = "100%", height = "400px"),
                                  absolutePanel(id = "controls", class = "panel panel-default", fixed= FALSE,
-                                               draggable = TRUE, bottom = "auto", right = "auto", left = 40, top = 60,
-                                               width = 280, height = "auto",
+                                               draggable = TRUE, bottom = "auto", right = "auto", left = 10, top = 10,
+                                               width = 240, height = "auto",
                                                style = "background-color: white;
                                                    opacity: 0.85;
                                                    padding: 20px 20px 20px 20px;
@@ -183,8 +183,8 @@ ui <- function(request){
                                  tags$style(type = 'text/css', '#double_map_2 {height: calc(98vh - 50px) !important;}'),
                                  leafletOutput("double_map_2", width = "100%", height = "400px"),
                                  absolutePanel(id = "controls", class = "panel panel-default", fixed= FALSE,
-                                               draggable = TRUE, bottom = "auto", right = "auto", left = 140, top = 60,
-                                               width = 280, height = "auto",
+                                               draggable = TRUE, bottom = "auto", right = "auto", left = 10, top = 10,
+                                               width = 240, height = "auto",
                                                style = "background-color: white;
                                                    opacity: 0.85;
                                                    padding: 20px 20px 20px 20px;
@@ -1032,7 +1032,7 @@ server <- function(input, output, session) {
         ggplot(aes(.data[[input$stat_s1]], .data[[input$stat_s2]], 
                    color = province))+
         geom_point(na.rm=TRUE, size= 1) +
-        geom_text_repel(aes(label = district), na.rm = TRUE, max.overlaps = 5) +
+        # geom_text_repel(aes(label = district), na.rm = TRUE, max.overlaps = 5) +
         geom_smooth(na.rm = TRUE, method = "lm") +
         scale_x_continuous(labels = scales::number_format() )+
         scale_y_continuous(labels = scales::number_format())+
